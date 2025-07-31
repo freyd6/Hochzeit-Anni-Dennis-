@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unsere Hochzeit</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlalTjsFw6xK0nJ6N21G7D5nQz5m1/r5k0n5q1T7f62b2r3o8t9m8r8F8/8Q22w0qF5N204e3h+6Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAo9TchMFlAbEFWws/MLJNYeHvq7GqvjJvYSpLZo=" crossorigin=""/>
+
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lightgallery-all.min.css" />
+
+    <style>
+        :root {
+            --color-primary: #3d3d3d; /* Dunkelgrau für Text und dezente Akzente */
+            --color-secondary: #fbfbfb; /* Sehr helles Grau/Weiß für Hintergründe */
+            --color-accent: #a08060; /* Dezentes Beige-Gold für Akzente */
+            --color-text-dark: #333333;
+            --color-text-light: #666666;
+            --color-white: #ffffff;
+
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Poppins', sans-serif;
+        }
+
+        /* --- Allgemeine Stile --- */
+        body {
+            font-family: var(--font-body);
+            line-height: 1.8;
+            margin: 0;
+            padding: 0;
+            color: var(--color-text-dark);
+            background-color: var(--color-secondary);
+            overflow-x: hidden;
+            font-size: 16px;
+        }
+
+        a {
+            color: var(--color-primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--color-accent);
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-heading);
+            color: var(--color-primary);
+            margin-top: 0;
+            line-height: 1.2;
+            font-weight: normal; /* Playfair Display wirkt schöner ohne bold */
+        }
+
+        /* --- Header & Navigation --- */
+        header {
+            background-color: rgba(255, 255, 255, 0.95); /* Leicht transparentes Weiß */
+            color: var(--color-primary);
+            padding: 1.2rem 0; /* Weniger Padding, schlanker */
+            text-align: center;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.03); /* Sehr dezenter Schatten */
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header h1 {
+            font-size: 2.5em; /* Etwas kleiner für dezenteren Look */
+            letter-spacing: 1.5px;
+            margin-bottom: 0.3rem;
+            color: var(--color-primary);
+            font-weight: normal; /* Leichter */
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0 25px;
+        }
+
+        nav ul li a {
+            color: var(--color-primary);
+            font-weight: 400; /* Weniger bold */
+            font-size: 0.95em; /* Etwas kleiner */
+            padding: 5px 0; /* Weniger Padding */
+            transition: color 0.3s ease;
+            position: relative;
+            display: inline-block;
+        }
+
+        nav ul li a::after { /* Dezenter Unterstrich-Effekt */
+            content: '';
+            position: absolute;
+            width: 0%;
+            height: 1px; /* Feinerer Unterstrich */
+            bottom: 0;
+            left: 50%;
+            background-color: var(--color-accent);
+            transform: translateX(-50%);
+            transition: width 0.3s ease-out;
+        }
+
+        nav ul li a:hover::after,
+        nav ul li a.active::after {
+            width: 100%;
+        }
+
+        nav ul li a:hover {
+            color: var(--color-accent);
+        }
+        nav ul li a.active {
+            color: var(--color-accent);
+        }
+
+        /* --- Hero Sektion (Willkommensbereich) --- */
+        #home {
+            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://static.wixstatic.com/media/nsplsh_d6a95f5739344406a6c4b26759c558b9~mv2.jpg/v1/fill/w_1920,h_1080,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/nsplsh_d6a95f5739344406a6c4b26759c558b9~mv2.jpg') no-repeat center center/cover;
+            height: 100vh; /* Volle Bildschirmhöhe */
+            color: var(--color-white);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 1.5s ease-out;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.1);
+        }
+
+        #home h2 {
+            font-size: 6em; /* Noch größer für Wirkung */
+            margin-bottom: 5px; /* Weniger Abstand */
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.3);
+            color: var(--color-white);
+            font-weight: 400; /* Dünner */
+            line-height: 1; 
+            letter-spacing: 2px;
+        }
+
+        #home p {
+            font-size: 2em; /* Größerer Untertitel */
+            margin-bottom: 20px; /* Weniger Abstand */
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+            animation: fadeIn 1.5s ease-out 0.5s forwards;
+            opacity: 0;
+            font-weight: 300; 
+            letter-spacing: 1px;
+        }
+
+        .countdown {
+            font-size: 2.5em;
+            font-family: var(--font-heading); /* Countdown in Heading-Font */
+            background-color: rgba(255,255,255,0.1); /* Sehr transparentes Weiß */
+            color: var(--color-white);
+            padding: 12px 25px; /* Etwas weniger Padding */
+            border-radius: 3px; /* Schärfere Ecken */
+            display: inline-block;
+            margin-top: 20px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+            animation: scaleIn 0.8s ease-out 1s forwards;
+            opacity: 0;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .countdown span {
+            font-family: var(--font-body); /* Labels in Body-Font */
+            font-size: 0.3em; /* Noch kleiner für das Label */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 3px; /* Weniger Abstand */
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* --- Hauptinhaltsbereich & Sektionen --- */
+        main {
+            padding: 0; /* Full-width sections, no padding here */
+            max-width: none; /* Keine maximale Breite */
+            margin: 0; /* Kein negativer Margin */
+            background-color: var(--color-secondary);
+            box-shadow: none; /* Keine Box-Schatten für main */
+            border-radius: 0; /* Keine abgerundeten Ecken */
+            position: relative;
+            z-index: 100;
+            animation: none; /* Keine Initial-Animation für main */
+        }
+
+        section {
+            display: none;
+            padding: 80px 20px; /* Einheitliches, großzügiges Padding für Sektionen */
+            max-width: 900px; /* Inhalte innen begrenzen */
+            margin: 0 auto; /* Inhalte zentrieren */
+            border-bottom: none; /* Keine Linien zwischen Sektionen standardmäßig */
+            animation: fadeInContent 0.6s ease-out;
+            background-color: var(--color-white); /* Alle Sektionen auf weißem Hintergrund */
+        }
+        
+        /* Alternierende Hintergrundfarben für Sektionen (optional, für Kontrast) */
+        section:nth-of-type(even) {
+            background-color: var(--color-secondary); /* Leichter Kontrast */
+        }
+
+        section.active {
+            display: block;
+        }
+
+        h2.section-title {
+            font-size: 3.2em;
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            padding-bottom: 10px;
+            color: var(--color-primary);
+            font-weight: 400; /* Dünner */
+            letter-spacing: 1px;
+        }
+
+        h2.section-title::after {
+            content: '';
+            position: absolute;
+            width: 50px; /* Kürzerer Unterstrich */
+            height: 1px; /* Sehr fein */
+            background-color: var(--color-accent);
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            border-radius: 0; /* Scharfkantig */
+        }
+        
+        /* Einleitungstexte der Sektionen */
+        main section > p:first-of-type {
+            text-align: center;
+            margin-bottom: 40px; /* Mehr Abstand */
+            font-size: 1.1em;
+            color: var(--color-text-light);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+        }
+        
+        /* Für die Abschnitte mit Bildern (Unsere Geschichte, Events) */
+        .event-details.with-image .description {
+            max-width: 600px; /* Etwas schmaler für Fokus */
+            margin: 0 auto;
+        }
+        .event-details.with-image .location-image {
+            width: 100%;
+            max-width: 650px; /* Einheitlicher für Bilder */
+            height: 400px; /* Einheitliche Höhe */
+            object-fit: cover;
+            border-radius: 5px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+        .event-details.with-image h3 {
+            font-size: 2em;
+            margin-bottom: 15px;
+            border-bottom: none;
+            padding-bottom: 0;
+            text-align: center;
+            font-weight: 500;
+        }
+        .event-details.with-image h3 i {
+            color: var(--color-accent);
+        }
+        .event-details.with-image p, .event-details.with-image ul li {
+            text-align: center; /* Text in diesen Sektionen zentrieren */
+            color: var(--color-text-light);
+            font-size: 1.05em;
+        }
+        .event-details.with-image ul {
+            padding: 0;
+            list-style: none;
+            text-align: center; /* Liste zentrieren */
+        }
+        .event-details.with-image ul li {
+            padding-left: 0; /* Keine Bullets, da Text zentriert */
+            position: static; /* Keine absoluten Positionierungen für Bullets */
+        }
+        .event-details.with-image ul li::before {
+            content: none; /* Keine Bullets hier */
+        }
+
+
+        /* --- Unsere Geschichte Sektion --- */
+        #our-story .event-details {
+            background-color: transparent; /* Keine extra Box */
+            box-shadow: none;
+            padding: 0;
+            margin-bottom: 80px; /* Mehr Abstand zwischen den "Geschichten" */
+        }
+        #our-story .event-details:last-of-type {
+            margin-bottom: 0;
+        }
+        /* Für abwechselnde Bild/Text-Anordnung */
+        #our-story .event-details.with-image:nth-child(even) {
+            flex-direction: column; /* Standard: Bild oben, Text unten */
+        }
+        #our-story .event-details.with-image:nth-child(odd) {
+            flex-direction: column; /* Auch hier Bild oben, Text unten, für einheitlichen Look */
+        }
+        #our-story .description p {
+            font-size: 1.05em;
+            color: var(--color-text-dark);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* --- Brautparty Sektion --- */
+        .person-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Noch flexibler */
+            gap: 30px;
+            margin-top: 40px;
+            justify-items: center;
+        }
+
+        .person-card {
+            background-color: var(--color-white);
+            border-radius: 5px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            max-width: 250px;
+            border: 1px solid rgba(0,0,0,0.05); /* Sehr feiner Rand */
+        }
+
+        .person-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .person-card i {
+            font-size: 2.2em; /* Etwas kleiner */
+            color: var(--color-accent);
+            margin-bottom: 10px;
+        }
+
+        .person-card h3 {
+            font-size: 1.5em; /* Etwas kleiner */
+            margin-bottom: 5px;
+            color: var(--color-primary);
+            font-weight: 500;
+        }
+
+        .person-card p {
+            font-size: 0.9em;
+            color: var(--color-text-light);
+            line-height: 1.6;
+        }
+
+
+        /* --- Geschenke Sektion --- */
+        .gift-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .gift-item {
+            background-color: var(--color-white);
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 5px;
+            padding: 30px;
+            text-align: center;
+            flex: 1 1 calc(33% - 60px); 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            max-width: 300px;
+        }
+
+        .gift-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .gift-item h3 {
+            font-size: 1.6em; /* Etwas kleiner */
+            margin-bottom: 10px;
+            color: var(--color-primary);
+            font-weight: 500;
+        }
+        .gift-item p {
+            font-size: 0.95em;
+            color: var(--color-text-light);
+        }
+        .gift-item .button {
+            background-color: var(--color-accent);
+            color: var(--color-white);
+            padding: 10px 20px;
+            border-radius: 3px;
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .gift-item .button:hover {
+            background-color: #8c724e; /* Dunkler Goldton */
+            transform: translateY(-2px);
+        }
+
+
+        /* --- Hotel & Anfahrt Sektion --- */
+        .location-info {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        @media (min-width: 768px) {
+            .location-info {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .location-card {
+            background-color: var(--color-white);
+            border-radius: 5px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            text-align: left;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .location-card h3 {
+            font-size: 1.8em; /* Etwas kleiner */
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .location-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        .location-card ul li {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            font-size: 0.95em;
+            color: var(--color-text-light);
+        }
+
+        .location-card ul li i {
+            color: var(--color-accent);
+            margin-right: 15px;
+            font-size: 1.1em;
+            flex-shrink: 0;
+            padding-top: 3px;
+        }
+
+        .location-card p {
+            margin-bottom: 1em;
+            font-size: 0.95em;
+            color: var(--color-text-light);
+        }
+        .location-card .button-small {
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            padding: 8px 15px;
+            border-radius: 3px;
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 0.85em;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .location-card .button-small:hover {
+            background-color: #2a2a2a; /* Dunkleres Grau */
+            transform: translateY(-1px);
+        }
+
+
+        #map {
+            height: 450px;
+            width: 100%;
+            margin-top: 40px;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+
+        /* --- RSVP Sektion (Formular) --- */
+        .rsvp-form {
+            background-color: var(--color-white);
+            padding: 40px;
+            border-radius: 8px; /* Kleinerer Radius */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            max-width: 600px; /* Etwas schmaler */
+            margin: 40px auto;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .rsvp-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 400; /* Leichter */
+            color: var(--color-primary);
+            font-size: 0.95em;
+        }
+
+        .rsvp-form input[type="text"],
+        .rsvp-form input[type="email"],
+        .rsvp-form textarea,
+        .rsvp-form select,
+        .rsvp-form input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px; /* Weniger Padding */
+            margin-bottom: 15px;
+            border: 1px solid #e0e0e0; /* Sehr hell */
+            border-radius: 3px;
+            font-size: 0.95em;
+            box-sizing: border-box;
+            background-color: var(--color-white);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .rsvp-form input:focus,
+        .rsvp-form textarea:focus,
+        .rsvp-form select:focus {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 2px rgba(160, 128, 96, 0.15); /* Weniger stark */
+            outline: none;
+        }
+
+        .rsvp-form textarea {
+            resize: vertical;
+            min-height: 80px; /* Weniger Höhe */
+        }
+
+        .rsvp-form button {
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            border: none;
+            padding: 12px 25px; /* Weniger Padding */
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            width: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .rsvp-form button:hover {
+            background-color: var(--color-accent);
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        /* --- Bildergalerie --- */
+        #gallery-section p {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            color: var(--color-text-light);
+        }
+
+        #gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Etwas kleiner */
+            gap: 15px; /* Weniger Abstand */
+            margin-top: 30px;
+        }
+
+        #gallery a {
+            display: block;
+            overflow: hidden;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08); /* Dezenter */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        #gallery a::after { 
+            content: '\f002'; /* FontAwesome Lupe Icon */
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--color-white);
+            font-size: 2em; /* Kleiner */
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 5;
+            text-shadow: 0 0 8px rgba(0,0,0,0.3);
+        }
+
+        #gallery a:hover::after {
+            opacity: 1;
+        }
+
+        #gallery a:hover {
+            transform: scale(1.02); /* Weniger starker Skalierung */
+            box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+        }
+
+        #gallery img {
+            width: 100%;
+            height: 200px; /* Einheitliche Höhe */
+            object-fit: cover;
+            display: block;
+            transition: filter 0.3s ease;
+        }
+
+        #gallery a:hover img {
+            filter: brightness(0.8) blur(0.5px); /* Noch dezenterer Filter */
+        }
+        
+        /* --- Photo Share Sektion (NEU) --- */
+        #photo-share {
+            text-align: center;
+        }
+
+        #photo-share .button {
+            background-color: var(--color-accent);
+            color: var(--color-white);
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 1.1em;
+            display: inline-block;
+            margin-top: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #photo-share .button:hover {
+            background-color: #8c724e; /* Dunklerer Akzent */
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        #photo-share .button i {
+            margin-right: 10px;
+        }
+
+        /* --- FAQ Sektion --- */
+        .faq-container {
+            max-width: 700px; /* Zentrieren und begrenzen */
+            margin: 40px auto;
+            border: 1px solid rgba(0,0,0,0.05); /* Dezenter Rahmen */
+            border-radius: 5px;
+            overflow: hidden; /* Für saubere Kanten des Rahmens */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .faq-item {
+            background-color: var(--color-white);
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .faq-item:hover {
+            background-color: rgba(0,0,0,0.02);
+        }
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            font-size: 1.05em;
+            color: var(--color-primary);
+            padding: 15px 25px; /* Mehr Padding */
+        }
+        .faq-question i {
+            font-size: 0.8em; /* Kleiner */
+            color: var(--color-accent); /* Akzentfarbe für Icon */
+        }
+        .faq-answer {
+            padding: 0 25px 15px 25px; /* Mehr Padding */
+            font-size: 0.9em; /* Kleiner */
+            color: var(--color-text-light);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+            line-height: 1.7;
+        }
+        .faq-item.active .faq-answer {
+            max-height: 300px; /* Genug Platz für die Antwort, anpassen bei Bedarf */
+            padding-top: 10px;
+            padding-bottom: 25px; /* Mehr Padding unten */
+        }
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            padding: 50px 0; /* Mehr Padding */
+            margin-top: 100px; /* Mehr Abstand zum Inhalt */
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            font-size: 0.85em; /* Kleiner */
+            box-shadow: 0 -3px 10px rgba(0,0,0,0.05);
+        }
+        footer a {
+            color: rgba(255,255,255,0.7);
+        }
+        footer a:hover {
+            color: var(--color-accent);
+        }
+
+        /* --- Responsive Anpassungen --- */
+        @media (max-width: 992px) {
+            header h1 {
+                font-size: 2em;
+            }
+            nav ul {
+                gap: 10px 15px;
+            }
+            #home h2 {
+                font-size: 5em;
+            }
+            #home p {
+                font-size: 1.8em;
+            }
+            .countdown {
+                font-size: 2.2em;
+            }
+            h2.section-title {
+                font-size: 2.8em;
+            }
+            .gift-item, .person-card {
+                flex: 1 1 calc(50% - 30px); /* 2 Spalten auf mittleren Bildschirmen */
+            }
+            .event-details.with-image .location-image {
+                height: 350px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.6em;
+            }
+            nav ul {
+                flex-direction: column;
+                gap: 8px;
+                padding-top: 10px;
+            }
+            nav ul li {
+                margin: 0;
+            }
+            #home {
+                padding: 120px 20px 80px 20px;
+                height: auto; /* Höhe flexibel machen */
+                min-height: 70vh; /* Mindesthöhe beibehalten */
+            }
+            #home h2 {
+                font-size: 3.5em;
+            }
+            #home p {
+                font-size: 1.4em;
+            }
+            .countdown {
+                font-size: 1.8em;
+                padding: 10px 20px;
+            }
+            section {
+                padding: 60px 15px;
+            }
+            h2.section-title {
+                font-size: 2.2em;
+            }
+            .gift-item, .location-card, .person-card {
+                flex: 1 1 100%; 
+            }
+            .event-details.with-image .location-image {
+                height: 280px;
+            }
+            #gallery {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            .rsvp-form {
+                padding: 30px;
+            }
+            .faq-question {
+                font-size: 1em;
+                padding: 12px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.2em;
+            }
+            #home h2 {
+                font-size: 2.5em;
+            }
+            #home p {
+                font-size: 1.1em;
+            }
+            .countdown {
+                font-size: 1.4em;
+                padding: 8px 15px;
+            }
+            h2.section-title {
+                font-size: 1.8em;
+            }
+            .event-details.with-image .location-image {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Ann-Kathrin & Dennis</h1>
+        <nav>
+            <ul>
+                <li><a href="#home" class="nav-link active" data-target="home">Willkommen</a></li>
+                <li><a href="#our-story" class="nav-link" data-target="our-story">Unsere Geschichte</a></li>
+                <li><a href="#wedding-party" class="nav-link" data-target="wedding-party">Brautparty</a></li>
+                <li><a href="#gifts" class="nav-link" data-target="gifts">Geschenke</a></li>
+                <li><a href="#location" class="nav-link" data-target="location">Hotel & Anfahrt</a></li>
+                <li id="nav-item-standesamt" style="display: none;"><a href="#standesamt" class="nav-link" data-target="standesamt">Standesamt</a></li>
+                <li><a href="#ceremony" class="nav-link" data-target="ceremony">Kirchl. Trauung</a></li>
+                <li><a href="#party" class="nav-link" data-target="party">Abendveranstaltung</a></li>
+                <li><a href="#gallery-section" class="nav-link" data-target="gallery-section">Galerie</a></li>
+                <li><a href="#photo-share" class="nav-link" data-target="photo-share">Fotos teilen</a></li> <li><a href="#faq" class="nav-link" data-target="faq">FAQ</a></li>
+                <li><a href="#rsvp" class="nav-link" data-target="rsvp">Rückmeldung (RSVP)</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home-content"> 
+            </section>
+
+        <section id="our-story">
+            <h2 class="section-title">Unsere Geschichte</h2>
+            <p>Jede Liebe hat ihre eigene Geschichte – hier ist unsere, gefüllt mit Momenten, die uns zueinander geführt haben.</p>
+            <div class="event-details with-image">
+                <img src="https://static.wixstatic.com/media/893c830e52514c62b9dd05141c23f2f5~mv2.jpg/v1/fill/w_980,h_654,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/893c830e52514c62b9dd05141c23f2f5~mv2.jpg" alt="Unser Kennenlernen" class="location-image">
+                <div class="description">
+                    <h3><i class="fas fa-heart"></i> Wie alles begann...</h3>
+                    <p>Es war ein ganz gewöhnlicher [Wochentag] im [Monat] [Jahr], als sich unsere Wege zum ersten Mal kreuzten. [Erzählen Sie hier kurz, wie Sie sich kennengelernt haben. War es eine Dating-App, Freunde, Zufall? Machen Sie es persönlich und humorvoll!] Seit diesem Tag war klar: Hier stimmt die Chemie!</p>
+                    <p>Die Zeit verging wie im Flug, gefüllt mit Lachen, Abenteuern und vielen kleinen Momenten, die uns immer näher zusammengebracht haben.</p>
+                </div>
+            </div>
+            <div class="event-details with-image"> 
+                 <img src="https://static.wixstatic.com/media/nsplsh_d6a95f5739344406a6c4b26759c558b9~mv2.jpg/v1/fill/w_980,h_654,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/nsplsh_d6a95f5739344406a6c4b26759c558b9~mv2.jpg" alt="Der Antrag" class="location-image">
+                <div class="description">
+                    <h3><i class="fas fa-gem"></i> Der magische Antrag</h3>
+                    <p>Der Tag der Verlobung war unvergesslich! [Erzählen Sie hier von Ihrem Heiratsantrag. Wo war es? Wie war der Moment? Was haben Sie gefühlt?] Es war ein Moment voller Emotionen und die Bestätigung, dass wir den Rest unseres Lebens gemeinsam verbringen möchten.</p>
+                    <p>Seitdem stecken wir mitten in den Vorbereitungen für unseren großen Tag und können es kaum erwarten, mit euch allen zu feiern!</p>
+                </div>
+            </div>
+            </section>
+
+        <section id="wedding-party">
+            <h2 class="section-title">Unsere Brautparty</h2>
+            <p>Diese wunderbaren Menschen stehen uns am großen Tag zur Seite und haben uns bei den Vorbereitungen tatkräftig unterstützt. Ohne sie wäre unsere Hochzeit nicht das, was sie sein wird!</p>
+            <div class="person-grid"> 
+                <div class="person-card">
+                    <i class="fas fa-crown"></i>
+                    <h3>Trauzeugin Ann-Kathrin</h3>
+                    <p><strong>[Name Trauzeugin]</strong></p>
+                    <p>Ann-Kathrins beste Freundin seit Kindertagen, ihr Fels in der Brandung und Seelenverwandte.</p>
+                </div>
+                <div class="person-card">
+                    <i class="fas fa-crown"></i>
+                    <h3>Trauzeuge Dennis</h3>
+                    <p><strong>[Name Trauzeuge]</strong></p>
+                    <p>Dennis' ältester Freund und sein treuer Begleiter durch dick und dünn.</p>
+                </div>
+                <div class="person-card">
+                    <i class="fas fa-female"></i>
+                    <h3>Brautjungfer</h3>
+                    <p><strong>[Name Brautjungfer 1]</strong></p>
+                    <p>[Kurze Beschreibung der Person und ihrer Beziehung zum Paar]</p>
+                </div>
+                <div class="person-card">
+                    <i class="fas fa-male"></i>
+                    <h3>Groomsman</h3>
+                    <p><strong>[Name Groomsman 1]</strong></p>
+                    <p>[Kurze Beschreibung der Person und ihrer Beziehung zum Paar]</p>
+                </div>
+                <div class="person-card">
+                    <i class="fas fa-child"></i>
+                    <h3>Blumenkind</h3>
+                    <p><strong>[Name Blumenkind 1]</strong></p>
+                    <p>Unser kleines Sonnenscheinchen, das uns den Weg zum Altar streuen wird.</p>
+                </div>
+                <div class="person-card">
+                    <i class="fas fa-user-tie"></i>
+                    <h3>Zeremonienmeister</h3>
+                    <p><strong>[Name Zeremonienmeister]</strong></p>
+                    <p>Unser Ansprechpartner für alle Fragen und Koordination am Hochzeitstag.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="gifts">
+            <h2 class="section-title">Geschenke</h2>
+            <p>Euer Kommen und eure Liebe sind das größte Geschenk für uns! Wer uns darüber hinaus eine Freude bereiten möchte, findet hier ein paar liebevolle Anregungen:</p>
+            <div class="gift-options">
+                <div class="gift-item">
+                    <h3><i class="fas fa-plane"></i> Unsere Hochzeitsreise</h3>
+                    <p>Wir träumen von einer unvergesslichen Hochzeitsreise nach [Reiseziel Ihrer Wahl]. Ein kleiner Beitrag zu unserer Reisekasse würde uns helfen, diesen Traum zu verwirklichen.</p>
+                    <p><em>(Beispiel IBAN: DE12 3456 7890 1234 5678 90 - [Name Empfänger])</em></p>
+                </div>
+                <div class="gift-item">
+                    <h3><i class="fas fa-gift"></i> Unsere Wunschliste</h3>
+                    <p>Für alle, die uns eine materielle Freude machen möchten, haben wir eine kleine Wunschliste bei unserem Lieblingsshop erstellt.</p>
+                    <p><a href="[Link zur Wunschliste]" target="_blank" class="button">Zur Wunschliste</a></p>
+                </div>
+                <div class="gift-item">
+                    <h3><i class="fas fa-heart"></i> Persönliche Freude</h3>
+                    <p>Über jede kreative und persönliche Idee freuen wir uns von Herzen. Wenn ihr uns lieber überraschen möchtet, ist das ebenfalls wunderbar!</p>
+                    <p>Für Rückfragen zu Geschenken oder Überraschungen kontaktiert bitte unsere lieben Trauzeugen: <br> [Name Trauzeuge] ([Telefonnummer/E-Mail])</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="location">
+            <h2 class="section-title">Hotel & Anfahrt</h2>
+            <p>Damit eure Anreise und euer Aufenthalt so entspannt wie möglich sind, haben wir hier einige nützliche Informationen für euch zusammengestellt.</p>
+
+            <div class="location-info">
+                <div class="location-card">
+                    <h3><i class="fas fa-hotel"></i> Empfohlene Hotels</h3>
+                    <ul>
+                        <li><i class="fas fa-bed"></i> <strong>Hotel Sonne:</strong> Gemütliches Ambiente, nur wenige Minuten vom Festort.<br> [Adresse Hotel 1]<br> <a href="[Link zum Hotel Sonne]" target="_blank">Zur Webseite</a></li>
+                        <li><i class="fas fa-city"></i> <strong>Stadthotel Elegant:</strong> Modern, zentral gelegen und gut angebunden.<br> [Adresse Hotel 2]<br> <a href="[Link zum Stadthotel]" target="_blank">Zur Webseite</a></li>
+                        <li><i class="fas fa-home"></i> <strong>Gasthof Zur Linde:</strong> Rustikal, preiswert und charmant.<br> [Adresse Hotel 3]<br> <a href="[Link zum Gasthof]" target="_blank">Zur Webseite</a></li>
+                    </ul>
+                </div>
+                <div class="location-card">
+                    <h3><i class="fas fa-map-marked-alt"></i> Anreise-Informationen</h3>
+                    <p><strong>Kirchliche Trauung:</strong><br><i class="fas fa-map-marker-alt"></i> Kapelle Rümmingen, Kanderner Str. 3, 79595 Rümmingen<br> Ausreichend Parkmöglichkeiten vorhanden.<br><a href="https://www.google.com/maps/dir/?api=1&destination=Kapelle+R%C3%BCmmingen,Kanderner+Str.+3,79595+R%C3%BCmmingen" target="_blank" class="button-small">Route planen</a></p>
+                    <p><strong>Abendveranstaltung:</strong><br><i class="fas fa-map-marker-alt"></i> Engemühle, Mühlenweg 1, 79588 Efringen-Kirchen<br> Ausreichend Parkplätze direkt an der Location.<br><a href="https://www.google.com/maps/dir/?api=1&destination=Engem%C3%BChle,M%C3%BChlenweg+1,79588+Efringen-Kirchen" target="_blank" class="button-small">Route planen</a></p>
+                    <p>Ein **Shuttle-Service** wird euch von der Trauung zur Abendlocation bringen. Details dazu erhaltet ihr vor Ort.</p>
+                </div>
+            </div>
+            <div id="map"></div> </section>
+
+        <section id="standesamt">
+            <h2 class="section-title">Standesamtliche Trauung</h2>
+            <div class="event-details with-image">
+                <img src="https://static.wixstatic.com/media/7b165d_526154625b50428d96d910d540306173~mv2.jpg/v1/fill/w_980,h_654,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/7b165d_526154625b50428d96d910d540306173~mv2.jpg" alt="Wasserschloss Inzlingen" class="location-image">
+                <div class="description">
+                    <h3><i class="fas fa-ring"></i> Unser Ja-Wort im Standesamt</h3>
+                    <p><strong>Datum:</strong> <i class="far fa-calendar-alt"></i> Donnerstag, 26. Juni 2026</p>
+                    <p><strong>Uhrzeit:</strong> <i class="far fa-clock"></i> Ab 14:00 Uhr</p>
+                    <p><strong>Ort:</strong> <i class="fas fa-map-marker-alt"></i> Wasserschloss Inzlingen, Riehenstraße 5, 79594 Inzlingen</p>
+                    <p>Wir freuen uns sehr, diesen intimen Moment der Trauung im kleinen Kreis mit euch im historischen Ambiente des Wasserschlosses Inzlingen zu teilen.</p>
+                    <ul>
+                        <li><i class="fas fa-info-circle"></i> **Ankunft:** Bitte findet euch ca. 15 Minuten vor Beginn ein.</li>
+                        <li><i class="fas fa-camera-slash"></i> **Fotografieren:** Während der Zeremonie selbst bitten wir, auf private Fotos zu verzichten. Wir haben einen Fotografen engagiert, der diese kostbaren Momente festhält. Danach sind Fotos herzlich willkommen!</li>
+                        <li><i class="fas fa-wine-glass-alt"></i> **Anschließend:** Nach der Trauung stoßen wir mit einem kleinen Sektempfang direkt vor dem Schloss auf unser Glück an.</li>
+                    </ul>
+                    <p><a href="https://www.google.com/maps/dir/?api=1&destination=Wasserschloss+Inzlingen,Riehenstra%C3%9Fe+5,79594+Inzlingen" target="_blank" class="button-small">Route zum Standesamt planen</a></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="ceremony">
+            <h2 class="section-title">Die Kirchliche Trauung</h2>
+            <div class="event-details with-image">
+                <img src="https://www.ruemmingen.de/fileadmin/_processed_/a/c/csm_Ortstafel_Kirche_01_2b6c071d79.jpg" alt="Kapelle Rümmingen" class="location-image">
+                <div class="description">
+                    <h3><i class="fas fa-church"></i> Unsere feierliche Zeremonie in der Kapelle Rümmingen</h3>
+                    <p><strong>Datum:</strong> <i class="far fa-calendar-alt"></i> Freitag, 27. Juni 2025</p>
+                    <p><strong>Uhrzeit:</strong> <i class="far fa-clock"></i> Ab 13:00 Uhr mit anschließendem Sektempfang</p>
+                    <p><strong>Ort:</strong> <i class="fas fa-map-marker-alt"></i> Kapelle Rümmingen, Kanderner Str. 3, 79595 Rümmingen</p>
+                    <p>Wir freuen uns darauf, euch bei diesem bedeutsamen Teil unseres Tages dabei zu haben, wenn wir vor Gott unser Eheversprechen geben. Im Anschluss an die Zeremonie laden wir euch herzlich zu einem Sektempfang direkt vor der Kapelle ein.</p>
+                    <ul>
+                        <li><i class="fas fa-camera-slash"></i> **Bitte keine Fotos während der Zeremonie:** Lasst uns diesen Moment gemeinsam und ungestört erleben. Unser professioneller Fotograf fängt alle Augenblicke für uns ein.</li>
+                        <li><i class="fas fa-child"></i> **Beiträge / Blumenkinder:** Wenn ihr oder eure Kinder etwas Besonderes zur Trauung beitragen möchtet (Lesung, Musik, Blumen streuen), kontaktiert bitte unsere Trauzeugen im Voraus.</li>
+                    </ul>
+                    <p><a href="https://www.google.com/maps/dir/?api=1&destination=Kapelle+R%C3%BCmmingen,Kanderner+Str.+3,79595+R%C3%BCmmingen" target="_blank" class="button-small">Route zur Kapelle planen</a></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="party">
+            <h2 class="section-title">Die Abendveranstaltung</h2>
+            <div class="event-details with-image">
+                <img src="https://www.engemuehle.de/wp-content/uploads/2021/08/Engemuehle_Titelbild.jpg" alt="Engemühle Efringen-Kirchen" class="location-image">
+                <div class="description">
+                    <h3><i class="fas fa-champagne-glasses"></i> Zeit für Tanz & Feier in der Engemühle</h3>
+                    <p><strong>Ort:</strong> <i class="fas fa-map-marker-alt"></i> Engemühle, Mühlenweg 1, 79588 Efringen-Kirchen</p>
+                    <p>Nach der kirchlichen Trauung und dem Sektempfang geht es direkt zur ausgelassenen Feier in der wunderschönen Engemühle. Freut euch auf eine unvergessliche Party mit leckerem Essen, toller Musik und viel guter Laune!</p>
+                    
+                    <h3>Zeitplan des Abends</h3>
+                    <ul>
+                        <li><i class="fas fa-glass-cheers"></i> **Ca. 17:00 Uhr:** Eintreffen der Gäste & gemütlicher Ausklang des Sektempfangs</li>
+                        <li><i class="fas fa-utensils"></i> **Ca. 18:30 Uhr:** Festliches Abendessen (Buffet/Menü)</li>
+                        <li><i class="fas fa-music"></i> **Ca. 20:00 Uhr:** Eröffnungstanz & Beginn der rauschenden Party</li>
+                        <li><i class="fas fa-cookie-bite"></i> **Ca. 22:00 Uhr:** Herzhafter Mitternachtssnack</li>
+                        <li><i class="fas fa-moon"></i> **Offenes Ende:** Wir feiern, solange die Füße tragen und die Stimmung gut ist!</li>
+                    </ul>
+                    
+                    <h3><i class="fas fa-cocktail"></i> Kulinarisches</h3>
+                    <p>Freut euch auf ein köstliches [Buffet/Menü] und eine reichhaltige Auswahl an Getränken, die den ganzen Abend über für euer Wohl sorgen.</p>
+
+                    <h3><i class="fas fa-comment-dots"></i> Beiträge & Überraschungen</h3>
+                    <p>Wer eine Rede halten, ein lustiges Spiel vorbereiten oder eine andere Überraschung für uns planen möchte, bitten wir, dies im Vorfeld mit unserem Zeremonienmeister abzustimmen. So vermeiden wir Überschneidungen und können den Ablauf optimal gestalten:</p>
+                    <p><strong>Zeremonienmeister:</strong> <i class="fas fa-user-tie"></i> [Name Zeremonienmeister] (<i class="fas fa-phone"></i> [Telefonnummer] / <i class="far fa-envelope"></i> [E-Mail])</p>
+
+                    <h3><i class="fas fa-bus-alt"></i> Shuttle-Service</h3>
+                    <p>Für eure Bequemlichkeit stellen wir einen Shuttle-Service von der Kirche zur Engemühle bereit. Die genauen Abfahrtszeiten und Haltestellen werden noch bekannt gegeben / vor Ort kommuniziert.</p>
+                    <p><a href="https://www.google.com/maps/dir/?api=1&destination=Engem%C3%BChle,M%C3%BChlenweg+1,79588+Efringen-Kirchen" target="_blank" class="button-small">Route zur Engemühle planen</a></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="gallery-section">
+            <h2 class="section-title">Unsere Galerie</h2>
+            <p>Einige unserer Lieblingsmomente, während wir uns auf den schönsten Tag unseres Lebens freuen.</p>
+            <div id="gallery" class="lightgallery">
+                <a class="gallery-item" href="https://static.wixstatic.com/media/7b165d_93b216fb9a5840d4a99905d41496a7d7~mv2.jpg/v1/fill/w_980,h_654,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/7b165d_93b216fb9a5840d4a99905d41496a7d7~mv2.jpg" data-sub-html="<h4>Unser Kennenlernen</h4><p>Ein ganz besonderer Anfang.</p>">
+                    <img src="https://static.wixstatic.com/media/7b165d_93b216fb9a5840d4a99905d41496a7d7~mv2.jpg/v1/fill/w_400,h_267,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/7b165d_93b216fb9a5840d4a99905d41496a7d7~mv2.jpg" alt="Hochzeitsbild 1" />
+                </a>
+                <a class="gallery-item" href="https://static.wixstatic.com/media/nsplsh_077e69c118a846f4882772719a779165~mv2.jpg/v1/fill/w_980,h_654,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/nsplsh_077e69c118a846f4882772719a779165~mv2.jpg" data-sub-html="<h4>Verlobung</h4><p>Der unvergessliche Antrag.</p>">
+                    <img src="https://static.wixstatic.com/media/nsplsh_077e69c118a846f4882772719a779165~mv2.jpg/v1/fill/w_400,h_267,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/nsplsh_077e69c118a846f4882772719a779165~mv2.jpg" alt="Hochzeitsbild 2" />
+                </a>
+                <a class="gallery-item" href="https://static.wixstatic.com/media/nsplsh_664e7c7a525f54316d554a~mv2.jpg/v1/fill/w_980,h_654,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/nsplsh_664e7c7a525f54316d554a~mv2.jpg" data-sub-html="<h4>Glückliche Momente</h4><p>Einfach wir beide.</p>">
+                    <img src="https://static.wixstatic.com/media/nsplsh_664e7c7a525f54316d554a~mv2.jpg/v1/fill/w_400,h_267,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/nsplsh_664e7c7a525f54316d554a~mv2.jpg" alt="Hochzeitsbild 3" />
+                </a>
+                <a class="gallery-item" href="https://static.wixstatic.com/media/nsplsh_09cf3ae714154fb0b7c12662c43141f2~mv2.jpg/v1/fill/w_980,h_654,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/nsplsh_09cf3ae714154fb0b7c12662c43141f2~mv2.jpg" data-sub-html="<h4>Vorbereitungen</h4><p>Planung macht Spaß!</p>">
+                    <img src="https://static.wixstatic.com/media/nsplsh_09cf3ae714154fb0b7c12662c43141f2~mv2.jpg/v1/fill/w_400,h_267,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/nsplsh_09cf3ae714154fb0b7c12662c43141f2~mv2.jpg" alt="Hochzeitsbild 4" />
+                </a>
+                <a class="gallery-item" href="https://static.wixstatic.com/media/nsplsh_d6a95f5739344406a6c4b26759c558b9~mv2.jpg/v1/fill/w_1920,h_1080,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/nsplsh_d6a95f5739344406a6c4b26759c558b9~mv2.jpg" data-sub-html="<h4>Freunde & Familie</h4><p>Mit unseren Liebsten.</p>">
+                    <img src="https://static.wixstatic.com/media/nsplsh_d6a95f5739344406a6c4b26759c558b9~mv2.jpg/v1/fill/w_400,h_267,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/nsplsh_d6a95f5739344406a6c4b26759c558b9~mv2.jpg" alt="Hochzeitsbild 5" />
+                </a>
+                <a class="gallery-item" href="https://static.wixstatic.com/media/7b165d_543c75d400e94119842a27b87e60b001~mv2.jpg/v1/fill/w_980,h_654,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/7b165d_543c75d400e94119842a27b87e60b001~mv2.jpg" data-sub-html="<h4>Unser Weg</h4><p>Gemeinsam in die Zukunft.</p>">
+                    <img src="https://static.wixstatic.com/media/7b165d_543c75d400e94119842a27b87e60b001~mv2.jpg/v1/fill/w_400,h_267,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/7b165d_543c75d400e94119842a27b87e60b001~mv2.jpg" alt="Hochzeitsbild 6" />
+                </a>
+                </div>
+        </section>
+
+        <section id="photo-share">
+            <h2 class="section-title">Eure Fotos teilen</h2>
+            <p>Wir würden uns riesig freuen, wenn ihr eure schönsten Momente unserer Hochzeit mit uns teilt! Eure Perspektiven sind uns wichtig.</p>
+            <p>Ladet eure Schnappschüsse und Videos ganz einfach über unseren speziellen Upload-Link hoch:</p>
+            
+            <a href="[LINK_ZU_IHREM_FOTO_UPLOAD_DIENST]" target="_blank" class="button">
+                <i class="fas fa-cloud-upload-alt"></i> Fotos hochladen
+            </a>
+            <p style="margin-top: 20px; font-size: 0.9em; color: var(--color-text-light);">Vielen Dank für eure Mithilfe, unseren Erinnerungsschatz zu füllen!</p>
+        </section>
+
+        <section id="faq">
+            <h2 class="section-title">Häufig gestellte Fragen (FAQ)</h2>
+            <p>Hier findet ihr Antworten auf die wichtigsten Fragen rund um unsere Hochzeit. Solltet ihr dennoch etwas vermissen, meldet euch gerne bei uns!</p>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span><i class="fas fa-question-circle"></i> Wo kann ich parken?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>An der **Kapelle Rümmingen** sind ausreichend Parkplätze direkt vor Ort vorhanden. Bei der **Engemühle** gibt es ebenfalls genügend kostenfreie Parkmöglichkeiten. Für das **Wasserschloss Inzlingen** stehen öffentliche Parkplätze in der näheren Umgebung zur Verfügung.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span><i class="fas fa-question-circle"></i> Gibt es eine Garderobe?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Ja, in der **Engemühle** wird eine Garderobe zur Verfügung stehen, in der ihr eure Jacken und Mäntel sicher aufbewahren könnt.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span><i class="fas fa-question-circle"></i> Wann beginnt die Party?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Die ausgelassene Party in der Engemühle startet voraussichtlich **gegen 20:00 Uhr** nach dem Abendessen und unserem Eröffnungstanz.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span><i class="fas fa-question-circle"></i> Gibt es Übernachtungsmöglichkeiten in der Nähe?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Ja, wir haben einige charmante Hotels in verschiedenen Preiskategorien in der Nähe unserer Locations auf unserer Seite **"Hotel & Anfahrt"** für euch aufgelistet.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span><i class="fas fa-question-circle"></i> Was sind eure Geschenkewünsche?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Euer Kommen und eure Liebe sind das größte Geschenk für uns! Wer uns dennoch eine Freude machen möchte, findet auf unserer Seite **"Geschenke"** alle Informationen zu unserer Hochzeitsreise-Kasse und unserer Wunschliste.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span><i class="fas fa-question-circle"></i> Gibt es einen Shuttle-Service?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Ja, wir organisieren einen **Shuttle-Service von der Kirchlichen Trauung in Rümmingen zur Abendlocation in der Engemühle**. Die genauen Abfahrtszeiten werden vor Ort bekannt gegeben.</p>
+                    </div>
+                </div>
+                </div>
+        </section>
+
+        <section id="rsvp">
+            <h2 class="section-title">Eure Rückmeldung (RSVP)</h2>
+            <p>Bitte gebt uns bis zum **[Datum RSVP-Frist, z.B. 31. Juli 2025]** Bescheid, ob ihr an unserem großen Tag dabei sein könnt. Dies hilft uns enorm bei der Planung und Vorfreude!</p>
+
+            <form class="rsvp-form" onsubmit="handleRsvpSubmit(event)">
+                <label for="name">Euer Name(n):</label>
+                <input type="text" id="name" name="name" placeholder="Max Mustermann & Lena Musterfrau" required>
+
+                <label for="email">Eure E-Mail-Adresse (für Rückfragen):</label>
+                <input type="email" id="email" name="email" placeholder="eure.email@beispiel.de" required>
+
+                <label for="attendance">Wir können:</label>
+                <select id="attendance" name="attendance" required>
+                    <option value="">Bitte auswählen</option>
+                    <option value="yes">Ja, sehr gerne dabei!</option>
+                    <option value="no">Leider können wir nicht teilnehmen.</option>
+                </select>
+
+                <label for="guests">Anzahl der Personen, die kommen (inkl. euch selbst):</label>
+                <input type="number" id="guests" name="guests" min="1" value="1">
+
+                <label for="dietary">Besondere Wünsche oder Allergien (z.B. vegetarisch, vegan, Gluten-, Laktoseintoleranz):</label>
+                <textarea id="dietary" name="dietary" placeholder="Hier könnt ihr uns eure Wünsche mitteilen..."></textarea>
+
+                <label for="message">Eine persönliche Nachricht an uns:</label>
+                <textarea id="message" name="message" placeholder="Wir freuen uns auf eure Nachrichten!"></textarea>
+
+                <button type="submit">Rückmeldung senden</button>
+                <p id="rsvp-message" style="margin-top: 25px; text-align: center; color: var(--color-primary); font-weight: bold; font-size: 1.1em;"></p>
+            </form>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>© 2025 Ann-Kathrin & Dennis. Mit Liebe gemacht. | <a href="#home" style="color: rgba(255,255,255,0.7);">Zurück nach oben</a></p>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjGwZZt6zFhSyaQJ7RGSkUj+3Lpnf6w=" crossorigin=""></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/lightgallery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/zoom/lg-zoom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/thumbnail/lg-thumbnail.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/fullscreen/lg-fullscreen.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/autoplay/lg-autoplay.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/share/lg-share.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/rotate/lg-rotate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/hash/lg-hash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/relativeCaption/lg-relative-caption.min.js"></script>
+
+    <script>
+        // --- Globale Variablen und Konstanten ---
+        const WEDDING_DATE = new Date('2025-06-27T13:00:00'); // Setzen Sie Ihr Hochzeitsdatum und -Uhrzeit hier! (Kirchliche Trauung)
+        const NAV_LINKS = document.querySelectorAll('.nav-link');
+        const SECTIONS = document.querySelectorAll('main section');
+        const RSVP_MESSAGE_ELEMENT = document.getElementById('rsvp-message');
+        const NAV_ITEM_STANDESAMT = document.getElementById('nav-item-standesamt'); // Das <li> Element für Standesamt
+
+        let mapInitialized = false; // Flag, um die Karte nur einmal zu initialisieren
+
+        // --- Navigations- und Sektionswechsel-Logik ---
+        function showSection(targetId) {
+            SECTIONS.forEach(section => {
+                section.classList.remove('active');
+            });
+            // Besondere Behandlung für die "Home"-Sektion, da ihr ID im main-Bereich jetzt "home-content" ist
+            const targetSection = (targetId === 'home') ? document.getElementById('home-content') : document.getElementById(targetId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            // Aktiven Navigationslink hervorheben
+            NAV_LINKS.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-target') === targetId) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Spezielle Initialisierungen für Sektionen
+            if (targetId === 'location' && !mapInitialized) {
+                initMap();
+                mapInitialized = true;
+            }
+            if (targetId === 'gallery-section') {
+                initLightGallery();
+            }
+        }
+
+        NAV_LINKS.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('data-target');
+                showSection(targetId);
+                // Optional: Scrollen zum Anfang der Sektion für Desktop
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        // --- Initialisierung beim Laden der Seite ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Überprüfe URL-Parameter für Standesamt-Anzeige
+            const urlParams = new URLSearchParams(window.location.search);
+            const showStandesamt = urlParams.get('show') === 'standesamt';
+
+            if (showStandesamt) {
+                NAV_ITEM_STANDESAMT.style.display = 'block'; // Nav-Element sichtbar machen
+                showSection('home'); // Zeige zuerst Home, kann auch direkt Standesamt sein
+            } else {
+                NAV_ITEM_STANDESAMT.style.display = 'none'; // Nav-Element verstecken
+                document.getElementById('standesamt').style.display = 'none'; // Sektion verstecken
+                showSection('home'); // Standardmäßig die Home-Sektion anzeigen
+            }
+
+            startCountdown(); // Countdown starten
+        });
+
+        // --- Countdown-Logik ---
+        function startCountdown() {
+            const countdownElement = document.getElementById('countdown');
+
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const distance = WEDDING_DATE - now;
+
+                if (distance < 0) {
+                    countdownElement.innerHTML = "Wir sind verheiratet! 🎉";
+                    clearInterval(countdownInterval);
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                countdownElement.innerHTML = `
+                    ${days} <span>Tage</span> : ${hours} <span>Stunden</span> : ${minutes} <span>Minuten</span> : ${seconds} <span>Sekunden</span>
+                `;
+            }
+
+            updateCountdown(); // Sofort aktualisieren
+            const countdownInterval = setInterval(updateCountdown, 1000);
+        }
+
+        // --- Karte mit Leaflet.js ---
+        function initMap() {
+            // Koordinaten der Locations
+            const standesamtLat = 47.5878; // Wasserschloss Inzlingen (ungefähre Koordinate)
+            const standesamtLon = 7.6946;
+
+            const ceremonyLat = 47.6421; // Kapelle Rümmingen (ungefähre Koordinate)
+            const ceremonyLon = 7.6433;
+
+            const partyLat = 47.6967; // Engemühle Efringen-Kirchen (ungefähre Koordinate)
+            const partyLon = 7.5750;
+
+            const map = L.map('map').setView([47.64, 7.64], 12); // Zentrum zwischen den Punkten
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Marker für Standesamt (nur anzeigen, wenn die Sektion sichtbar ist)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('show') === 'standesamt') {
+                L.marker([standesamtLat, standesamtLon])
+                    .addTo(map)
+                    .bindPopup('<b>Wasserschloss Inzlingen</b><br>Riehenstraße 5, 79594 Inzlingen.')
+                    .openPopup();
+            }
+            
+            // Marker für Kirchliche Trauung
+            L.marker([ceremonyLat, ceremonyLon])
+                .addTo(map)
+                .bindPopup('<b>Kapelle Rümmingen</b><br>Kanderner Str. 3, 79595 Rümmingen.')
+                .openPopup();
+
+            // Marker für Abendveranstaltung
+            L.marker([partyLat, partyLon])
+                .addTo(map)
+                .bindPopup('<b>Engemühle</b><br>Mühlenweg 1, 79588 Efringen-Kirchen.')
+                .openPopup();
+
+             // Optional: Eine Linie zwischen den Orten, um den Shuttleweg zu visualisieren
+            var latlngs = [
+                [ceremonyLat, ceremonyLon],
+                [partyLat, partyLon]
+            ];
+            var polyline = L.polyline(latlngs, {color: 'red'}).addTo(map);
+            map.fitBounds(polyline.getBounds()); // Karte anpassen, damit alles sichtbar ist
+        }
+
+        // --- Bildergalerie mit Lightgallery.js ---
+        function initLightGallery() {
+            // Überprüfen, ob Lightgallery bereits initialisiert wurde, um doppelte Initialisierungen zu vermeiden
+            if (document.getElementById('gallery').classList.contains('lg-inited')) {
+                return;
+            }
+
+            lightGallery(document.getElementById('gallery'), {
+                plugins: [lgZoom, lgThumbnail, lgFullscreen, lgAutoplay, lgShare, lgRotate, lgHash, lgRelativeCaption],
+                licenseKey: 'your_license_key', // Optional: Wenn Sie eine Lightgallery Pro Lizenz haben
+                speed: 500,
+                download: false // Gäste sollen Bilder nicht direkt herunterladen können
+            });
+        }
+
+        // --- FAQ Akkordeon-Logik ---
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', () => {
+                // Schließe alle anderen offenen FAQ-Elemente
+                document.querySelectorAll('.faq-item.active').forEach(openItem => {
+                    if (openItem !== item) { // Schließe nicht das Element, das gerade geklickt wurde
+                        openItem.classList.remove('active');
+                    }
+                });
+                item.classList.toggle('active'); // Fügt 'active' Klasse hinzu/entfernt sie
+            });
+        });
+
+
+        // --- RSVP Formular (Dummy-Funktion) ---
+        function handleRsvpSubmit(event) {
+            event.preventDefault(); // Verhindert das Neuladen der Seite
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            // Hier würden Sie normalerweise die Daten an einen Server senden (AJAX/Fetch API)
+            // oder eine E-Mail generieren (geht nicht direkt im Browser wegen Sicherheit).
+            // Für dieses Beispiel simulieren wir eine erfolgreiche Übermittlung.
+
+            console.log("RSVP-Daten gesammelt:", data); // Zum Debugging in der Konsole
+
+            // Beispiel: Einfache Validierung (könnte erweitert werden)
+            if (!data.name || !data.email || !data.attendance) {
+                RSVP_MESSAGE_ELEMENT.style.color = 'red';
+                RSVP_MESSAGE_ELEMENT.textContent = 'Bitte füllen Sie alle erforderlichen Felder aus (Name, E-Mail, Anwesenheit).';
+                return;
+            }
+
+            // Erfolgsmeldung anzeigen
+            RSVP_MESSAGE_ELEMENT.style.color = 'green';
+            RSVP_MESSAGE_ELEMENT.textContent = 'Vielen Dank für Ihre Rückmeldung! Wir freuen uns auf Sie.';
+
+            form.reset(); // Formular zurücksetzen
+        }
+    </script>
+</body>
+</html>
